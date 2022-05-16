@@ -1,0 +1,66 @@
+; DEFINIDAS EN EL APUNTE TEÓRICO
+Def funrec = < o [1, ~1] -> 2; funrec o [- o [1, ~1], apndl]
+Def iota = funrec o [id, ~<>]
+Def eq0 = eq o [id, ~0] 
+Def fact = eq0 -> ~1; (/*) o iota
+Def IP = (/+) o (@*) o trans
+; EJEMPLOS EN CLASE
+Def promedio = % o [/+,length]
+; EJERCICIOS RESUELTOS
+; 1. Definir funciones que devuelvan como resultado:
+; 1a) El máximo de dos números. 
+Def max = > -> 1; 2
+; 1b) El máximo de una secuencia. 
+Def maxSeq = /max
+; 1c) El primer átomo de una secuencia.
+; vRecursiva
+Def firstSeq = atom o 1 -> 1; firstSeq o tl
+; vFuncional
+Def filterAtoms = @(atom -> id; ~<>)
+Def auxRE = null o 1 -> 2; apndl
+Def removeEmptys = (/auxRE) o apndr o [id, ~<>]
+Def firstSeq = (null -> id ; 1) o removeEmptys o filterAtoms
+; 1d) El elemento mínimo entre los máximos por fila de una matriz (minimax).
+Def min = > -> 1; 2
+Def minSeq = /min
+Def minimax = minSeq o @max
+; 2. Definir funciones que determinen: 
+; 2a) La pertenencia de un elemento a una secuencia.
+; vRecursiva (by Francisco Ávalos)
+Def pert = (not o null o 2 -> (eq o [1, 1 o 2] -> ~T ; pert o [1, tl o 2]) ; ~F)
+; vFuncional
+Def pert = null o 2r -> ~F; (/or) o (@eq) o distl
+; 2b) Si una secuencia tiene un solo componente.
+Def tienelong1 = eq o [length, ~1]
+; 2c) Si la cantidad de átomos de una secuencia es par. 
+;vRecursiva
+Def SecPar = (SecParCalculo o cantidadatomos)
+Def SecParCalculo = (> o [id;~2] -> SecParCalculo o - o [id,~2]; eq o [id,~2])
+; 3. Dada una secuencia con dos subsecuencias, definir funciones para determinar: 
+; 3a) La unión de ambas subsecuencias.
+;vRecursiva
+Def UnionSubSec = (null o 1 -> (id o 2); (pert o [1r o 1, 2]  -> UnionSubSec o apndr o [[id o tlr o 1], 2] ; ( UnionSubSec o apndr o [[id o tlr o 1], apndl o [1r o 1,2]] ) ))
+; 3b) La intersección de ambas subsecuencias.
+;vRecursiva
+Def InterSubSec = Interseccion o [1,2,~<>]
+Def Interseccion = (null o 1 -> removeEmptys o 3;  (pert o [1r o 1, 2]  -> Interseccion o [id o tlr o 1,2, apndl o [1r o 1, 3]]; Interseccion o [id o tlr o 1,2, 3]))
+; 3c) La diferencia de ambas subsecuencias.
+;VRecursiva
+Def DifSubSec = Diferencia o [1,2,~<>,1]
+Def Diferencia = (null o 1 -> Diferencia2 o [2,4,3];  (not o pert o [1r o 1, 2]  -> Diferencia o [id o tlr o 1,2, apndl o [1r o 1, 3],4]; Diferencia o [id o tlr o 1,2, 3,4]))
+Def Diferencia2 = (null o 1 -> removeEmptys o 3;  (not o pert o [1r o 1, 2]  -> Diferencia2 o [id o tlr o 1,2, apndl o [1r o 1, 3]]; Diferencia2 o [id o tlr o 1,2, 3]))
+; 3d) La diferencia simétrica de ambas subsecuencias.
+; 5. Definir funciones que permitan:
+; 5a) Planchar una secuencia.
+; 5b) Concatenar dos subsecuencias planchadas.
+; 5c) Invertir totalmente una secuencia.
+; 5e) Calcular la profundidad de una secuencia (niveles de subsecuencias)
+; 13. Dada una secuencia con dos elementos, donde el primero es un átomo o secuencia y
+; el segundo es un número, obtener una secuencia que contenga el primer elemento
+; tantas veces como indica el número.
+; Ej: repetir: < a, 4 > retorna < a, a, a, a >
+; Utilizando la función anterior, escribir una función no recursiva que aplicada a un
+; número n devuelva una matriz de n × n de la siguiente forma:
+; Si n=4 retorna < <1, 2, 3, 4>, <1, 2, 3, 4>, <1, 2, 3, 4>, <1, 2, 3, 4> >
+;
+;============================================================================
